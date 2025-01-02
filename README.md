@@ -16,7 +16,6 @@ A full-stack application depicting a working model of a flight booking applicati
 - Flight search and booking
 - Payment integration
 - Booking history and management
-- Admin panel for managing flights and bookings
 
 ## Setup and Installation
 
