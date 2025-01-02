@@ -1,7 +1,5 @@
 package com.flight.commercialFlight.dto;
 
-import com.flight.booking.system.commercialflight.entity.Flight;
-import com.flight.booking.system.commercialflight.entity.Passenger;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,7 +13,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class BookingDetails {
     private String bookingId;
-    private Flight flight;
-    private Passenger passenger;
+    private FlightDetails flight;
+    private PassengerDetails passenger;
     private LocalDate bookingDate;
 }

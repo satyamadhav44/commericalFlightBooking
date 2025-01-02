@@ -1,6 +1,6 @@
 package com.flight.commercialFlight.configuration;
 
-import com.flight.booking.system.commercialflight.utils.CustomFilter;
+import com.flight.commercialFlight.utils.CustomFilter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

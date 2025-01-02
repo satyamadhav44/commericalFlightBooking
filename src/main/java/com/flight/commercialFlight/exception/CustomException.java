@@ -1,4 +1,4 @@
-package com.flight.booking.system.commercialflight.exception;
+package com.flight.commercialFlight.exception;
 
 import lombok.Getter;
 

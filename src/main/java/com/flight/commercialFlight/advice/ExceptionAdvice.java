@@ -1,5 +1,7 @@
 package com.flight.commercialFlight.advice;
 
+import com.flight.commercialFlight.dto.BaseResponse;
+import com.flight.commercialFlight.exception.CustomException;
 import com.mongodb.MongoClientException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
