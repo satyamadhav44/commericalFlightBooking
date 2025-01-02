@@ -15,32 +15,6 @@ public class CustomFilter implements jakarta.servlet.Filter {
      * @param filterConfig
      * @throws ServletException
      */
-    /*@Override
-    public void init(FilterConfig filterConfig) throws ServletException {
-
-    }
-
-    *//**
-     * @param servletRequest
-     * @param servletResponse
-     * @param filterChain
-     * @throws IOException
-     * @throws ServletException
-     *//*
-    @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-
-        HttpServletRequest request = (HttpServletRequest) servletRequest;
-        log.info(" request received {} : {} ",request.getMethod(),request.getRequestURI());
-        log.info(" request headers are : {} ",request.getHeaderNames());
-        HttpHeaders headers = new HttpHeaders();
-        CustomHeaders customHeaders = new CustomHeaders();
-        request.getHeaderNames().asIterator().forEachRemaining(headerName ->{
-            headers.add(headerName,request.getHeader(headerName));
-        });
-        customHeaders.addAll(headers);
-        filterChain.doFilter(servletRequest,servletResponse);
-    }*/
 
     /**
      * @param servletRequest
@@ -53,13 +27,11 @@ public class CustomFilter implements jakarta.servlet.Filter {
     public void doFilter(jakarta.servlet.ServletRequest servletRequest, jakarta.servlet.ServletResponse servletResponse, jakarta.servlet.FilterChain filterChain) throws IOException, jakarta.servlet.ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         log.info(" request received {} : {} ",request.getMethod(),request.getRequestURI());
-        log.info(" request headers are : {} ",request.getHeaderNames());
+       // log.info(" request headers are : {} ",request.getHeaderNames());
         HttpHeaders headers = new HttpHeaders();
-        CustomHeaders customHeaders = new CustomHeaders();
         request.getHeaderNames().asIterator().forEachRemaining(headerName ->{
             headers.add(headerName,request.getHeader(headerName));
         });
-        customHeaders.addAll(headers);
         filterChain.doFilter(servletRequest,servletResponse);
     }
 

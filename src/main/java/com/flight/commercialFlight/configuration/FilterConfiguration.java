@@ -16,7 +16,7 @@ public class FilterConfiguration {
         registrationBean.setFilter(new CustomFilter());
 
         // Define URL patterns to which the filter should be applied
-        registrationBean.addUrlPatterns("*/api/*");
+        registrationBean.addUrlPatterns("/api/*");
 
         return registrationBean;
     }

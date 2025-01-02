@@ -1,6 +1,7 @@
 package com.flight.commercialFlight.dto;
 
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 
@@ -13,8 +14,10 @@ public class FlightDetails {
 
     private String number;
     private String airline;
-    private LocalDate depTime;
-    private LocalDate arrTime;
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private String depTime;
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")// YYYY-MM-DDTHH:mm:ss
+    private String arrTime; // YYYY-MM-DDTHH:mm:ss
     private String depLocation;
     private String destination;
 }

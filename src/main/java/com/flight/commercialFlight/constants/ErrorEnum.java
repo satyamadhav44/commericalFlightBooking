@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum ErrorEnum {
-    F101("Id not found");
+    F101("Record not found");
     private String message;
 
     ErrorEnum(String message) {
