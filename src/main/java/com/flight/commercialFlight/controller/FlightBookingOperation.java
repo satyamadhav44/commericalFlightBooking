@@ -3,13 +3,16 @@ package com.flight.commercialFlight.controller;
 import com.flight.commercialFlight.constants.CustomHeaders;
 import com.flight.commercialFlight.dto.BaseResponse;
 import com.flight.commercialFlight.dto.FlightDetails;
+import com.flight.commercialFlight.dto.PassengerDetails;
 import com.flight.commercialFlight.service.FlightManagementService;
+import com.flight.commercialFlight.service.PassengerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
 import static com.flight.commercialFlight.constants.Paths.*;
 
 @RestController
@@ -20,25 +23,48 @@ public class FlightBookingOperation {
     @Autowired
     private FlightManagementService flightManagementService;
 
+    @Autowired
+    private PassengerService passengerService;
+
     @PostMapping(ADD_NEW_PLANE)
     public ResponseEntity<BaseResponse> addNewPlane(@RequestHeader HttpHeaders headers, @RequestBody @Validated FlightDetails flightDetails) {
-      log.info("the header id parameter is : {} ",headers.get(CustomHeaders.X_CORRELATION_ID));
+        log.info("the header id parameter is : {} ", headers.get(CustomHeaders.X_CORRELATION_ID));
         return ResponseEntity.ok(flightManagementService.onboardNewFlights(flightDetails));
     }
 
     @PutMapping(UPDATE_PLANE_INFO)
-    public ResponseEntity<BaseResponse> updateFlightInfo(@RequestHeader HttpHeaders headers, @RequestBody FlightDetails flightDetails,@PathVariable("flight_id") String flightId){
-        return ResponseEntity.ok(flightManagementService.updateFlightInformation(flightDetails,flightId));
+    public ResponseEntity<BaseResponse> updateFlightInfo(@RequestHeader HttpHeaders headers, @RequestBody FlightDetails flightDetails, @PathVariable("flight_id") String flightId) {
+        return ResponseEntity.ok(flightManagementService.updateFlightInformation(flightDetails, flightId));
     }
 
     @GetMapping(FETCH_FLIGHT_ALL)
-    public ResponseEntity<BaseResponse> getAllFlights(@RequestHeader HttpHeaders headers){
+    public ResponseEntity<BaseResponse> getAllFlights(@RequestHeader HttpHeaders headers) {
         return ResponseEntity.ok(flightManagementService.fetchAllFlightInformation());
     }
 
     @GetMapping(FETCH_FLIGHT_DETAIL)
-    public ResponseEntity<BaseResponse> getFlightDetail(@RequestHeader HttpHeaders headers, @PathVariable("flight_id") String flightId){
+    public ResponseEntity<BaseResponse> getFlightDetail(@RequestHeader HttpHeaders headers, @PathVariable("flight_id") String flightId) {
         return ResponseEntity.ok(flightManagementService.fetchFlightbyId(flightId));
+    }
+
+    @GetMapping(FETCH_PASSENGER_ALL)
+    public ResponseEntity<BaseResponse> getAllPassengerInfo(@RequestHeader HttpHeaders headers) {
+        return ResponseEntity.ok(passengerService.getAllPassengers());
+    }
+
+    @PostMapping(REGISTER_PASSENGER)
+    public ResponseEntity<BaseResponse> registerPassenger(@RequestHeader HttpHeaders headers, @RequestBody PassengerDetails passengerDetails) {
+        return ResponseEntity.ok(passengerService.registerPassenger(passengerDetails));
+    }
+
+    @PutMapping(UPDATE_PASSENGER)
+    public ResponseEntity<BaseResponse> updatePassenger(@RequestHeader HttpHeaders headers, @RequestBody PassengerDetails passengerDetails) {
+        return ResponseEntity.ok(passengerService.updatePassengerDetails(passengerDetails));
+    }
+
+    @GetMapping(FETCH_PASENG_ID)
+    public ResponseEntity<BaseResponse> getPassengerDetails(@RequestHeader HttpHeaders headers, @PathVariable("passenger_id") String passengerId) {
+        return ResponseEntity.ok(passengerService.getPassengerInfo(passengerId));
     }
 
 }

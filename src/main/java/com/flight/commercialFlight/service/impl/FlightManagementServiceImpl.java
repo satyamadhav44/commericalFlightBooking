@@ -1,18 +1,24 @@
-package com.flight.commercialFlight.service;
+package com.flight.commercialFlight.service.impl;
+
 import com.flight.commercialFlight.constants.ErrorEnum;
 import com.flight.commercialFlight.dto.BaseResponse;
 import com.flight.commercialFlight.dto.FlightDetails;
 import com.flight.commercialFlight.entity.Flight;
 import com.flight.commercialFlight.exception.CustomException;
 import com.flight.commercialFlight.repository.FlightRepo;
+import com.flight.commercialFlight.service.FlightManagementService;
 import com.flight.commercialFlight.utils.Converter;
 import com.mongodb.MongoClientException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static com.flight.commercialFlight.constants.MessagesAndCodes.HTTP_200;
+import static com.flight.commercialFlight.constants.MessagesAndCodes.RECORD_ADDED;
 
 @Slf4j
 @Service
@@ -29,7 +35,7 @@ public class FlightManagementServiceImpl implements FlightManagementService {
     public BaseResponse onboardNewFlights(FlightDetails flightDetails) throws MongoClientException {
         Flight flightEntity = Converter.dtoToEntity(flightDetails);
         flightRepo.insert(flightEntity);
-        return BaseResponse.builder().statusCode("200").data("Record inserted").build();
+        return BaseResponse.builder().statusCode(HTTP_200).data(RECORD_ADDED).build();
     }
 
     /**
@@ -37,15 +43,15 @@ public class FlightManagementServiceImpl implements FlightManagementService {
      * @return
      */
     @Override
-    public BaseResponse updateFlightInformation(FlightDetails flightDetails,String flightId) {
+    public BaseResponse updateFlightInformation(FlightDetails flightDetails, String flightId) {
         flightDetails.setNumber(flightId);
         Flight flight = Converter.dtoToEntity(flightDetails);
-        if(flightRepo.existsById(flight.getNumber())){
+        if (flightRepo.existsById(flight.getNumber())) {
             flightRepo.save(flight);
-        }else {
-          throw new CustomException(ErrorEnum.F101.getMessage(),ErrorEnum.F101.name());
+        } else {
+            throw new CustomException(ErrorEnum.F101.getMessage(), ErrorEnum.F101.name());
         }
-        return BaseResponse.builder().data("data Updated").statusCode("200").build();
+        return BaseResponse.builder().data("data Updated").statusCode(HTTP_200).build();
     }
 
     /**
@@ -53,8 +59,11 @@ public class FlightManagementServiceImpl implements FlightManagementService {
      */
     @Override
     public BaseResponse fetchAllFlightInformation() {
-        List<Flight> flights = flightRepo.findAll();
-        return BaseResponse.builder().data(flights).statusCode("200").build();
+        List<FlightDetails> flightDetails = new ArrayList<>();
+        flightRepo.findAll().forEach(each -> {
+            flightDetails.add(Converter.entityToDto(each));
+        });
+        return BaseResponse.builder().data(flightDetails).statusCode(HTTP_200).build();
     }
 
     @Override
@@ -62,11 +71,11 @@ public class FlightManagementServiceImpl implements FlightManagementService {
         FlightDetails flightDetails = new FlightDetails();
         BaseResponse baseResponse = new BaseResponse();
         Optional<Flight> flightOptional = flightRepo.findById(flightId);
-        if(flightOptional.isPresent()){
+        if (flightOptional.isPresent()) {
             flightDetails = Converter.entityToDto(flightOptional.get());
             baseResponse.setData(flightDetails);
-            baseResponse.setStatusCode("200");
-        }else {
+            baseResponse.setStatusCode(HTTP_200);
+        } else {
             baseResponse.setData(ErrorEnum.F101.getMessage());
             baseResponse.setStatusCode(ErrorEnum.F101.name());
         }

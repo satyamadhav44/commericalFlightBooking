@@ -3,15 +3,13 @@ package com.flight.commercialFlight.dto;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.time.LocalDate;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @NonNull
 public class FlightDetails {
-
+    
     private String number;
     private String airline;
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
