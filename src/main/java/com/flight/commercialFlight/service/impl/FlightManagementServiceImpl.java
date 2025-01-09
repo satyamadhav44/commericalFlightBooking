@@ -81,4 +81,20 @@ public class FlightManagementServiceImpl implements FlightManagementService {
         }
         return baseResponse;
     }
+
+    @Override
+    public BaseResponse searchFlights(String departure, String destination) {
+        List<FlightDetails> flightDetails = new ArrayList<>();
+        flightRepo.findAll().stream().filter(e -> e.getDepLocation().equals(departure) && e.getDestination().equals(destination)).toList().forEach(
+                each -> {
+                    flightDetails.add(Converter.entityToDto(each));
+                }
+        );
+        return BaseResponse.builder().data(flightDetails).statusCode(HTTP_200).build();
+    }
+
+    @Override
+    public BaseResponse filterFlightsByDateTime(String datetime) {
+        return null;
+    }
 }

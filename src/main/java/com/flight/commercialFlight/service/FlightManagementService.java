@@ -6,8 +6,15 @@ import com.mongodb.MongoClientException;
 
 public interface FlightManagementService {
 
-    public BaseResponse onboardNewFlights(FlightDetails flightDetails) throws MongoClientException;
-    public BaseResponse updateFlightInformation(FlightDetails flightDetails,String flightId);
-    public BaseResponse fetchAllFlightInformation();
-    public BaseResponse fetchFlightbyId(String flightId);
+    BaseResponse onboardNewFlights(FlightDetails flightDetails) throws MongoClientException;
+
+    BaseResponse updateFlightInformation(FlightDetails flightDetails, String flightId);
+
+    BaseResponse fetchAllFlightInformation();
+
+    BaseResponse fetchFlightbyId(String flightId);
+
+    BaseResponse searchFlights(String departure, String destination);
+
+    BaseResponse filterFlightsByDateTime(String datetime);
 }

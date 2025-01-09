@@ -6,7 +6,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.LocalDate;
+import java.util.Date;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
@@ -14,8 +15,8 @@ import java.time.LocalDate;
 @Document(collection = "Booking")
 public class Booking {
     @Id
-    private String bookingId;
+    private String bookingId = UUID.randomUUID().toString().split("-")[0];
     private Flight flight;
-    private Passenger passengerId;
-    private LocalDate bookingDate;
+    private Passenger passenger;
+    private Date bookingDate;
 }
