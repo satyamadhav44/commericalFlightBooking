@@ -2,7 +2,7 @@ package com.flight.commercialFlight.repository;
 
 
 import com.flight.commercialFlight.entity.Passenger;
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 
-public interface PassengerRepo extends MongoRepository<Passenger, String> {
+public interface PassengerRepo extends ReactiveMongoRepository<Passenger, String> {
 }
