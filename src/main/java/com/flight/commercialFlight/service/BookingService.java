@@ -1,16 +1,17 @@
 package com.flight.commercialFlight.service;
 
 import com.flight.commercialFlight.dto.BaseResponse;
+import reactor.core.publisher.Mono;
 
 public interface BookingService {
 
-    BaseResponse makeFlightBooking(String flightNo, String passengerId) throws InterruptedException;
+    Mono<BaseResponse> makeFlightBooking(String flightNo, String passengerId) throws InterruptedException;
 
-    BaseResponse cancelFlightBooking(String bookingId);
+    Mono<BaseResponse> cancelFlightBooking(String bookingId);
 
-    BaseResponse viewBookingByFlight(String flightNum);
+    Mono<BaseResponse> viewBookingByFlight(String flightNum);
 
-    BaseResponse viewBookingByPassenger(String passId);
-    
-    BaseResponse getAlltheBookings();
+    Mono<BaseResponse> viewBookingByPassenger(String passId);
+
+    Mono<BaseResponse> getAlltheBookings();
 }

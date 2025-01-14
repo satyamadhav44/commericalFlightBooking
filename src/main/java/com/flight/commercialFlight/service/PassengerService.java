@@ -2,14 +2,15 @@ package com.flight.commercialFlight.service;
 
 import com.flight.commercialFlight.dto.BaseResponse;
 import com.flight.commercialFlight.dto.PassengerDetails;
+import reactor.core.publisher.Mono;
 
 public interface PassengerService {
 
-    BaseResponse getAllPassengers();
+    Mono<BaseResponse> getAllPassengers();
 
-    BaseResponse registerPassenger(PassengerDetails passengerDetails);
+    Mono<BaseResponse> registerPassenger(PassengerDetails passengerDetails);
 
-    BaseResponse updatePassengerDetails(PassengerDetails passengerDetails);
+    Mono<BaseResponse> updatePassengerDetails(PassengerDetails passengerDetails);
 
-    BaseResponse getPassengerInfo(String passengerId);
+    Mono<BaseResponse> getPassengerInfo(String passengerId);
 }

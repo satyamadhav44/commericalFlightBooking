@@ -12,13 +12,13 @@ import com.mongodb.MongoClientException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-import static com.flight.commercialFlight.constants.MessagesAndCodes.HTTP_200;
-import static com.flight.commercialFlight.constants.MessagesAndCodes.RECORD_ADDED;
+import static com.flight.commercialFlight.constants.ErrorEnum.F102;
+import static com.flight.commercialFlight.constants.MessagesAndCodes.*;
 
 @Slf4j
 @Service
@@ -32,10 +32,11 @@ public class FlightManagementServiceImpl implements FlightManagementService {
     private FlightRepo flightRepo;
 
     @Override
-    public BaseResponse onboardNewFlights(FlightDetails flightDetails) throws MongoClientException {
+    public Mono<BaseResponse> onboardNewFlights(FlightDetails flightDetails) throws MongoClientException {
         Flight flightEntity = Converter.dtoToEntity(flightDetails);
-        flightRepo.insert(flightEntity);
-        return BaseResponse.builder().statusCode(HTTP_200).data(RECORD_ADDED).build();
+        return flightRepo.insert(flightEntity)
+                .doOnError(err -> BaseResponse.builder().data(err.getMessage()).statusCode(F102.name()).build())
+                .map(value -> BaseResponse.builder().data(RECORD_ADDED).statusCode(HTTP_200).build());
     }
 
     /**
@@ -43,58 +44,71 @@ public class FlightManagementServiceImpl implements FlightManagementService {
      * @return
      */
     @Override
-    public BaseResponse updateFlightInformation(FlightDetails flightDetails, String flightId) {
+    public Mono<BaseResponse> updateFlightInformation(FlightDetails flightDetails, String flightId) {
         flightDetails.setNumber(flightId);
         Flight flight = Converter.dtoToEntity(flightDetails);
-        if (flightRepo.existsById(flight.getNumber())) {
-            flightRepo.save(flight);
-        } else {
-            throw new CustomException(ErrorEnum.F101.getMessage(), ErrorEnum.F101.name());
-        }
-        return BaseResponse.builder().data("data Updated").statusCode(HTTP_200).build();
+        return flightRepo.existsById(flightId)
+                .flatMap(
+                        exists -> {
+                            if (exists) {
+                                return flightRepo.save(flight).map(value -> BaseResponse.builder().data(RECORD_UPDATED).statusCode(HTTP_200).build());
+                            } else {
+                                return Mono.just(BaseResponse.builder().data(ErrorEnum.F101.getMessage()).statusCode(ErrorEnum.F101.name()).build());
+                            }
+                        });
     }
 
     /**
      * @return
      */
     @Override
-    public BaseResponse fetchAllFlightInformation() {
+    public Mono<BaseResponse> fetchAllFlightInformation() {
         List<FlightDetails> flightDetails = new ArrayList<>();
-        flightRepo.findAll().forEach(each -> {
-            flightDetails.add(Converter.entityToDto(each));
-        });
-        return BaseResponse.builder().data(flightDetails).statusCode(HTTP_200).build();
+        return flightRepo.findAll().collectList()
+                .map(value -> {
+                    value.forEach(each -> {
+                        FlightDetails details = Converter.entityToDto(each);
+                        flightDetails.add(details);
+                    });
+                    return BaseResponse.builder().data(flightDetails).statusCode(HTTP_200).build();
+                });
     }
 
     @Override
-    public BaseResponse fetchFlightbyId(String flightId) {
+    public Mono<BaseResponse> fetchFlightbyId(String flightId) {
         FlightDetails flightDetails = new FlightDetails();
-        BaseResponse baseResponse = new BaseResponse();
-        Optional<Flight> flightOptional = flightRepo.findById(flightId);
-        if (flightOptional.isPresent()) {
-            flightDetails = Converter.entityToDto(flightOptional.get());
-            baseResponse.setData(flightDetails);
-            baseResponse.setStatusCode(HTTP_200);
-        } else {
-            baseResponse.setData(ErrorEnum.F101.getMessage());
-            baseResponse.setStatusCode(ErrorEnum.F101.name());
-        }
-        return baseResponse;
+        return flightRepo.existsById(flightId)
+                .doOnError(err -> {
+                    throw new RuntimeException(err.getMessage());
+                })
+                .flatMap(exists -> {
+                    if (exists) {
+                        return flightRepo.findById(flightId)
+                                .map(flight -> BaseResponse.builder().data(Converter.entityToDto(flight)).statusCode(HTTP_200).build());
+                    } else {
+                        return Mono.just(BaseResponse.builder().data(ErrorEnum.F101.getMessage()).statusCode(ErrorEnum.F101.name()).build());
+
+                    }
+                });
     }
 
     @Override
-    public BaseResponse searchFlights(String departure, String destination) {
+    public Mono<BaseResponse> searchFlights(String departure, String destination) {
         List<FlightDetails> flightDetails = new ArrayList<>();
-        flightRepo.findAll().stream().filter(e -> e.getDepLocation().equals(departure) && e.getDestination().equals(destination)).toList().forEach(
-                each -> {
-                    flightDetails.add(Converter.entityToDto(each));
-                }
-        );
-        return BaseResponse.builder().data(flightDetails).statusCode(HTTP_200).build();
+        return flightRepo.findAll().collectSortedList()
+                .flatMap(listValues -> {
+                    listValues.stream().filter(e -> e.getDepLocation().equalsIgnoreCase(departure) && e.getDestination().equalsIgnoreCase(destination))
+                            .forEach(each -> {
+                                flightDetails.add(Converter.entityToDto(each));
+                            });
+                    return Mono.just(BaseResponse.builder().data(flightDetails).statusCode(HTTP_200).build());
+                }).doOnError(err -> {
+                    throw new CustomException(err.getMessage(), HTTP_500);
+                });
     }
 
     @Override
-    public BaseResponse filterFlightsByDateTime(String datetime) {
-        return null;
+    public Mono<BaseResponse> filterFlightsByDateTime(String datetime) {
+        return Mono.empty();
     }
 }
