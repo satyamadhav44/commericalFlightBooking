@@ -76,7 +76,6 @@ public class FlightManagementServiceImpl implements FlightManagementService {
 
     @Override
     public Mono<BaseResponse> fetchFlightbyId(String flightId) {
-        FlightDetails flightDetails = new FlightDetails();
         return flightRepo.existsById(flightId)
                 .doOnError(err -> {
                     throw new RuntimeException(err.getMessage());
