@@ -78,7 +78,7 @@ public class FlightManagementServiceImpl implements FlightManagementService {
     public Mono<BaseResponse> fetchFlightbyId(String flightId) {
         return flightRepo.existsById(flightId)
                 .doOnError(err -> {
-                    throw new RuntimeException(err.getMessage());
+                    throw new CustomException(err.getMessage(), F102.name());
                 })
                 .flatMap(exists -> {
                     if (exists) {

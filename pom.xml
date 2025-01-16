@@ -31,6 +31,17 @@
         <maven.compiler.target>17</maven.compiler.target>
         <java.version>17</java.version>
         <spring-cloud.version>2023.0.1</spring-cloud.version>
+        <sonar.coverage.exclusions>
+            **/advice/**,
+            **/configuration/*,
+            **/constants/*,
+            **/controller/*,
+            **/dto/*,
+            **/entity/*,
+            **/exception/*,
+            **/repository/*,
+            **/utils/*
+        </sonar.coverage.exclusions>
     </properties>
     <dependencies>
         <dependency>
@@ -42,16 +53,16 @@
             <artifactId>swagger-annotations</artifactId>
             <version>1.6.10</version>
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.8.2</version>
-        </dependency>
-        <dependency>
+            <version>4.13.1</version>
+        </dependency>-->
+        <!--<dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
             <version>2.0.2-beta</version>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-mongodb-reactive</artifactId>
@@ -89,6 +100,12 @@
             <optional>true</optional>
         </dependency>
         <dependency>
+            <groupId>io.projectreactor</groupId>
+            <artifactId>reactor-test</artifactId>
+            <version>3.5.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
@@ -119,6 +136,32 @@
                         </exclude>
                     </excludes>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.8</version>
+                <configuration>
+                    <excludes>
+                        <exclude>**/commercialFlight/advice/**</exclude>
+                        <exclude>**/commercialFlight/configuration/**</exclude>
+                        <exclude>**/commercialFlight/constants/**</exclude>
+                        <exclude>**/commercialFlight/controller/**</exclude>
+                        <exclude>**/commercialFlight/dto/**</exclude>
+                        <exclude>**/commercialFlight/entity/**</exclude>
+                        <exclude>**/commercialFlight/exception/**</exclude>
+                        <exclude>**/commercialFlight/repository/**</exclude>
+                        <exclude>**/commercialFlight/utils/**</exclude>
+                    </excludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>jacoco-report</id>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
