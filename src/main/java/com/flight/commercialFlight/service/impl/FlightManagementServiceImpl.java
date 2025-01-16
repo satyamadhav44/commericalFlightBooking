@@ -94,12 +94,11 @@ public class FlightManagementServiceImpl implements FlightManagementService {
     @Override
     public Mono<BaseResponse> searchFlights(String departure, String destination) {
         List<FlightDetails> flightDetails = new ArrayList<>();
-        return flightRepo.findAll().collectSortedList()
+        return flightRepo.findByDepLocationAndDestination(departure, destination).collectSortedList()
                 .flatMap(listValues -> {
-                    listValues.stream().filter(e -> e.getDepLocation().equalsIgnoreCase(departure) && e.getDestination().equalsIgnoreCase(destination))
-                            .forEach(each -> {
-                                flightDetails.add(Converter.entityToDto(each));
-                            });
+                    listValues.forEach(each -> {
+                        flightDetails.add(Converter.entityToDto(each));
+                    });
                     return Mono.just(BaseResponse.builder().data(flightDetails).statusCode(HTTP_200).build());
                 }).doOnError(err -> {
                     throw new CustomException(err.getMessage(), HTTP_500);
