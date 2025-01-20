@@ -41,7 +41,7 @@ public class FlightManagementServiceImplTest {
     @Test
     void onboardNewFlights_ThrowsException() {
         FlightDetails flightDetails = new FlightDetails();
-        when(flightRepo.insert(any(Flight.class))).thenReturn(Mono.error(new CustomException("error", F102.name())));
+        when(flightRepo.insert(any(Flight.class))).thenReturn(Mono.error(() -> new CustomException("error", F102.name())));
         Mono<BaseResponse> responseMono = flightManagementService.onboardNewFlights(flightDetails);
         StepVerifier.create(responseMono)
                 .expectErrorMatches(res -> res instanceof CustomException && ((CustomException) res).getErrorCode().equals(F102.name())).verify();
@@ -92,7 +92,7 @@ public class FlightManagementServiceImplTest {
 
     @Test
     void fetchFlightbyId_ThrowsException() {
-        when(flightRepo.existsById(anyString())).thenReturn(Mono.error(new CustomException("error thrown", F102.name())));
+        when(flightRepo.existsById(anyString())).thenReturn(Mono.error(() -> new CustomException("error thrown", F102.name())));
         Mono<BaseResponse> responseMono = flightManagementService.fetchFlightbyId("1");
         StepVerifier.create(responseMono)
                 .expectErrorMatches(err -> err instanceof CustomException && ((CustomException) err).getErrorCode().equals(F102.name()));
@@ -111,7 +111,7 @@ public class FlightManagementServiceImplTest {
 
     @Test
     void searchFlights_ThrowException() {
-        when(flightRepo.findByDepLocationAndDestination(anyString(), anyString())).thenReturn(Flux.error(new CustomException("error", HTTP_500)));
+        when(flightRepo.findByDepLocationAndDestination(anyString(), anyString())).thenReturn(Flux.error(() -> new CustomException("error", HTTP_500)));
         Mono<BaseResponse> responseMono = flightManagementService.searchFlights("Singapore", "Bangalore");
         StepVerifier.create(responseMono)
                 .expectErrorMatches(res -> res instanceof CustomException && ((CustomException) res).getErrorCode().equals(HTTP_500)).verify();

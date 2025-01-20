@@ -51,7 +51,7 @@ public class PassengerServiceImplTest {
     @Test
     void registerPassenger_Failure() {
         PassengerDetails passengerDetails = new PassengerDetails("Satya", "R12345", "1");
-        when(passengerRepo.insert(any(Passenger.class))).thenReturn(Mono.error(new CustomException(ErrorEnum.F102.getMessage(), ErrorEnum.F102.name())));
+        when(passengerRepo.insert(any(Passenger.class))).thenReturn(Mono.error(() -> new CustomException(ErrorEnum.F102.getMessage(), ErrorEnum.F102.name())));
         Mono<BaseResponse> responseMono = passengerService.registerPassenger(passengerDetails);
         StepVerifier.create(responseMono)
                 .expectErrorMatches(res -> res instanceof CustomException && res.getMessage().equals(ErrorEnum.F102.getMessage())).verify();
@@ -80,7 +80,7 @@ public class PassengerServiceImplTest {
     @Test
     void updatePassengerDetails_When_ExceptionThrown() {
         PassengerDetails passengerDetails = new PassengerDetails("Satya", "R12345", "1");
-        when(passengerRepo.existsById(anyString())).thenReturn(Mono.error(new CustomException(ErrorEnum.F102.getMessage(), ErrorEnum.F102.name())));
+        when(passengerRepo.existsById(anyString())).thenReturn(Mono.error(() -> new CustomException(ErrorEnum.F102.getMessage(), ErrorEnum.F102.name())));
         Mono<BaseResponse> responseMono = passengerService.updatePassengerDetails(passengerDetails);
         StepVerifier.create(responseMono)
                 .expectErrorMatches(err -> err instanceof CustomException && err.getMessage().equals(ErrorEnum.F102.getMessage()));
@@ -105,7 +105,7 @@ public class PassengerServiceImplTest {
 
     @Test
     void getPassengerInfo_When_ExceptionThrown() {
-        when(passengerRepo.existsById(anyString())).thenReturn(Mono.error(new CustomException(ErrorEnum.F102.getMessage(), ErrorEnum.F102.name())));
+        when(passengerRepo.existsById(anyString())).thenReturn(Mono.error(() -> new CustomException(ErrorEnum.F102.getMessage(), ErrorEnum.F102.name())));
         Mono<BaseResponse> responseMono = passengerService.getPassengerInfo("1");
         StepVerifier.create(responseMono)
                 .expectErrorMatches(err -> err instanceof CustomException && err.getMessage().equals(ErrorEnum.F102.getMessage()));

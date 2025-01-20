@@ -103,7 +103,7 @@ class BookingServiceImplTest {
     void viewBookingByFlight_ThrowsException() {
         FlightDetails flightDetails = new FlightDetails();
         when(flightManagementService.fetchFlightbyId(anyString())).thenReturn(Mono.just(new BaseResponse(flightDetails, HTTP_200)));
-        when(bookingRepo.findAllByFlightNumber(anyString())).thenReturn(Flux.error(new CustomException("error", HTTP_500)));
+        when(bookingRepo.findAllByFlightNumber(anyString())).thenReturn(Flux.error(() -> new CustomException("error", HTTP_500)));
         Mono<BaseResponse> responseMono = bookingService.viewBookingByFlight("1");
         StepVerifier.create(responseMono)
                 .expectErrorMatches(errRes -> errRes instanceof CustomException && ((CustomException) errRes).getErrorCode().equals(ErrorEnum.F102.name())).verify();
@@ -111,7 +111,7 @@ class BookingServiceImplTest {
 
     @Test
     void viewBookingByFlight_NoBookingFoundOnFlight() {
-        when(flightManagementService.fetchFlightbyId(anyString())).thenReturn(Mono.error(new CustomException(ErrorEnum.F101.getMessage(), ErrorEnum.F102.name())));
+        when(flightManagementService.fetchFlightbyId(anyString())).thenReturn(Mono.error(() -> new CustomException(ErrorEnum.F101.getMessage(), ErrorEnum.F102.name())));
         Mono<BaseResponse> responseMono = bookingService.viewBookingByFlight("1");
         StepVerifier.create(responseMono)
                 .expectErrorMatches(throwable -> throwable instanceof CustomException && throwable.getMessage().equals(ErrorEnum.F101.getMessage())).verify();
@@ -131,7 +131,7 @@ class BookingServiceImplTest {
     void viewBookingByPassenger_ThrowsException() {
         PassengerDetails passengerDetails = new PassengerDetails();
         when(passengerService.getPassengerInfo(anyString())).thenReturn(Mono.just(new BaseResponse(passengerDetails, HTTP_200)));
-        when(bookingRepo.findAllByPassengerId(anyString())).thenReturn(Flux.error(new CustomException("error", HTTP_500)));
+        when(bookingRepo.findAllByPassengerId(anyString())).thenReturn(Flux.error(() -> new CustomException("error", HTTP_500)));
         Mono<BaseResponse> responseMono = bookingService.viewBookingByPassenger("1");
         StepVerifier.create(responseMono)
                 .expectErrorMatches(errRes -> errRes instanceof CustomException && ((CustomException) errRes).getErrorCode().equals(ErrorEnum.F102.name())).verify();
@@ -139,7 +139,7 @@ class BookingServiceImplTest {
 
     @Test
     void viewBookingByPassenger_NoBookingFoundOnFlight() {
-        when(passengerService.getPassengerInfo(anyString())).thenReturn(Mono.error(new CustomException(ErrorEnum.F101.getMessage(), ErrorEnum.F102.name())));
+        when(passengerService.getPassengerInfo(anyString())).thenReturn(Mono.error(() -> new CustomException(ErrorEnum.F101.getMessage(), ErrorEnum.F102.name())));
         Mono<BaseResponse> responseMono = bookingService.viewBookingByPassenger("1");
         StepVerifier.create(responseMono)
                 .expectErrorMatches(throwable -> throwable instanceof CustomException && throwable.getMessage().equals(ErrorEnum.F101.getMessage())).verify();
