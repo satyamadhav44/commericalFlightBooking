@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
@@ -32,8 +33,11 @@ public class FlightBookingOperation {
     private BookingService bookingService;
 
     @PostMapping(ADD_NEW_PLANE)
-    public ResponseEntity<Mono<BaseResponse>> addnewplane(@RequestHeader HttpHeaders headers, @RequestBody @Validated FlightDetails flightDetails) {
+    public ResponseEntity<Mono<BaseResponse>> addnewplane(@RequestHeader HttpHeaders headers, @RequestBody @Validated FlightDetails flightDetails, BindingResult bindingResult) {
         log.info("the header id parameter is : {} ", headers.get(CustomHeaders.X_CORRELATION_ID));
+        if (bindingResult.hasErrors()) {
+            
+        }
         return ResponseEntity.ok(flightManagementService.onboardNewFlights(flightDetails));
     }
 

@@ -48,14 +48,10 @@ public class FlightManagementServiceImpl implements FlightManagementService {
         flightDetails.setNumber(flightId);
         Flight flight = Converter.dtoToEntity(flightDetails);
         return flightRepo.existsById(flightId)
-                .flatMap(
-                        exists -> {
-                            if (exists) {
-                                return flightRepo.save(flight).map(value -> BaseResponse.builder().data(RECORD_UPDATED).statusCode(HTTP_200).build());
-                            } else {
-                                return Mono.just(BaseResponse.builder().data(ErrorEnum.F101.getMessage()).statusCode(ErrorEnum.F101.name()).build());
-                            }
-                        });
+                .thenReturn(flight)
+                .flatMap(value -> flightRepo.save(value)
+                        .map(value1 -> BaseResponse.builder().data(RECORD_UPDATED).statusCode(HTTP_200).build()));
+
     }
 
     /**
